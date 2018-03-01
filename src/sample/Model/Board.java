@@ -9,27 +9,36 @@ import sample.Model.Utility.Pair;
 
 public class Board {
 
-    private Stone[][] board;
+    private Point[][] board;
 
     public Board(int size) {
-        board = new Stone[size][size];
+        board = new Point[size][size];
+
+        for (int i = 0; i < board.length; i++)
+            for (int j = 0; j < board.length; j++)
+                board[i][j] = new Point();
+
+        for (int i = 0; i < board.length; i++)                      // connect adjacent points
+            for (int j = 0; j < board.length; j++)
+                for (Point adjacentPoint : getAdjacentPointsNESW(i, j))
+                    board[i][j].getAdjacentPoints().add(adjacentPoint);
     }
 
     public boolean isValidMove(int row, int col, Color color) {
-        if(!isValidLocation(row, col) || board[row][col] != null)
+        if(!isValidLocation(row, col) || board[row][col].getStone() != null)
             return false;
 
         boolean isValidMove = false;
         placeStoneOnBoard(row, col, color);
 
-        if(Stone.getNumLiberties(board[row][col], new HashSet<>()) > 0)
+        if(Stone.getNumLiberties(board[row][col].getStone(), new HashSet<>()) > 0)
             isValidMove = true;
         else {
             Queue<Stone> q1 = new LinkedList<>();
             Queue<Stone> q2 = new LinkedList<>();
             Set<Stone> visited = new HashSet<>();
 
-            Stone newStone = board[row][col];
+            Stone newStone = board[row][col].getStone();
             q1.add(newStone);
             visited.add(newStone);
 
@@ -54,7 +63,7 @@ public class Board {
 
             for (int i = 0; i < board.length; i++)                      // check if stone captured
                 for (int j = 0; j < board.length; j++)
-                    if(board[i][j] != null && board[i][j].getColor() != color && Stone.getNumLiberties(board[i][j], new HashSet<>()) == 0)
+                    if(board[i][j].getStone() != null && board[i][j].getStone().getColor() != color && Stone.getNumLiberties(board[i][j].getStone(), new HashSet<>()) == 0)
                         isValidMove = true;
         }
 
@@ -67,7 +76,7 @@ public class Board {
 
         for (int i = 0; i < board.length; i++)
             for (int j = 0; j < board.length; j++)     // capture enemy stones
-                if (board[i][j] != null && board[i][j].getColor() != currPlayer && Stone.getNumLiberties(board[i][j], new HashSet<>()) == 0)
+                if (board[i][j].getStone() != null && board[i][j].getStone().getColor() != currPlayer && Stone.getNumLiberties(board[i][j].getStone(), new HashSet<>()) == 0)
                     stonesCaptured.add(new Pair<>(i, j));
 
         for (Pair p : stonesCaptured)
@@ -80,7 +89,7 @@ public class Board {
         int n = 0;
         for (int i = 0; i < board.length; i++)
             for (int j = 0; j < board.length; j++)
-                if (board[i][j] != null && board[i][j].getColor() != currPlayer && Stone.getNumLiberties(board[i][j], new HashSet<>()) == 0)
+                if (board[i][j].getStone() != null && board[i][j].getStone().getColor() != currPlayer && Stone.getNumLiberties(board[i][j].getStone(), new HashSet<>()) == 0)
                     n++;
         return n;
     }
@@ -88,7 +97,7 @@ public class Board {
     public Pair<Integer, Integer> captureSingleStone(Color currPlayer) {
         for (int i = 0; i < board.length; i++)
             for (int j = 0; j < board.length; j++)     // capture enemy stones
-                if (board[i][j] != null && board[i][j].getColor() != currPlayer && Stone.getNumLiberties(board[i][j], new HashSet<>()) == 0)
+                if (board[i][j].getStone() != null && board[i][j].getStone().getColor() != currPlayer && Stone.getNumLiberties(board[i][j].getStone(), new HashSet<>()) == 0)
                     return new Pair<>(i, j);
         throw new RuntimeException("Oops");
     }
@@ -108,7 +117,7 @@ public class Board {
 
     public void placeStoneOnBoard(int row, int col, Color color) {  // preconditions: move is valid
         Stone newStone = createStone(row, col, color);
-        board[row][col] = newStone;
+        board[row][col].setStone(newStone);
 
         for (Stone adjacentStone : getAdjacentStonesNESW(row, col)) {
             if (adjacentStone != null) {
@@ -121,12 +130,12 @@ public class Board {
     public void removeStoneFromBoard(int row, int col) {
         for (Stone adjacentStone : getAdjacentStonesNESW(row, col)) {
             if (adjacentStone != null) {
-                board[row][col].getAdjacentStones().remove(adjacentStone);
-                adjacentStone.getAdjacentStones().remove(board[row][col]);
+                board[row][col].getStone().getAdjacentStones().remove(adjacentStone);
+                adjacentStone.getAdjacentStones().remove(board[row][col].getStone());
             }
         }
 
-        board[row][col] = null;
+        board[row][col].setStone(null);
     }
 
     private Stone[] getAdjacentStonesNESW(int row, int col) {
@@ -138,9 +147,24 @@ public class Board {
         return new Stone[]{north, east, south, west};
     }
 
-    private Stone getStone(int row, int col) {
+    private Point[] getAdjacentPointsNESW(int row, int col) {
+        Point north = getPoint(row - 1, col);
+        Point east  = getPoint(row, col + 1);
+        Point south = getPoint(row + 1, col);
+        Point west  = getPoint(row, col - 1);
+
+        return new Point[]{north, east, south, west};
+    }
+
+    private Point getPoint(int row, int col) {
         if (isValidLocation(row, col))
             return board[row][col];
+        return null;
+    }
+
+    private Stone getStone(int row, int col) {
+        if (isValidLocation(row, col))
+            return board[row][col].getStone();
         return null;
     }
 
@@ -162,9 +186,9 @@ public class Board {
             for (int j = 0; j < board.length; j++) {
                 if(board[i][j] == null)
                     sb.append(" ");
-                else if(board[i][j].getColor() == Color.BLACK)
+                else if(board[i][j].getStone().getColor() == Color.BLACK)
                     sb.append("0");
-                else if(board[i][j].getColor() == Color.WHITE)
+                else if(board[i][j].getStone().getColor() == Color.WHITE)
                     sb.append("1");
                 sb.append(" ");
             }
@@ -181,14 +205,14 @@ public class Board {
     public void clearBoard() {
         for (int i = 0; i < board.length; i++)
             for (int j = 0; j < board.length; j++)
-                board[i][j] = null;
+                board[i][j].setStone(null);
     }
 
     public int size() {
         return board.length;
     }
 
-    public Stone[][] getBoard() {   // used for testing purposes
+    public Point[][] getPoints() {   // used for testing purposes
         return board;
     }
 }

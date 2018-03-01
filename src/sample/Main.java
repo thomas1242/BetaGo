@@ -30,7 +30,7 @@ public class Main extends Application {
         gameView = new GameView();
         gameView.getStylesheets().add("sample/stylesheet.css");
         gameView.setPrefSize(WIDTH, HEIGHT);
-        gameView.displayHomeScreen();
+        gameView.displayGamePlayScreen();
 
         primaryStage.setTitle("BetaGo");
         primaryStage.setScene( new Scene(gameView, WIDTH / 0.80, HEIGHT) );
@@ -119,6 +119,7 @@ public class Main extends Application {
                     else
                         drawCircle(row, col, new Color(0, 0, 0, 0.5));
                 }
+
             });
 
             setOnMouseExited(event -> drawBoardState());
@@ -138,11 +139,12 @@ public class Main extends Application {
         private void drawBoardState() {
             drawBackground();
 
-            Stone[][] stones = game.getBoard().getBoard();
+            Point[][] stones = game.getBoard().getPoints();
+
             for (int i = 0; i < stones.length; i++)
                 for (int j = 0; j < stones.length; j++)
-                    if(stones[i][j] != null)
-                        drawCircle(i, j, stones[i][j].getColor());
+                    if(stones[i][j] != null && stones[i][j].getStone() != null)
+                        drawCircle(i, j, stones[i][j].getStone().getColor());
         }
 
         private void drawCircle(double row, double col, Paint p) {
@@ -375,10 +377,23 @@ public class Main extends Application {
             difficultyBtns.setStyle("-fx-alignment: center;");
             difficultyBtns.setSpacing(20.0);
             difficultyBtns.getChildren().addAll(easyBtn, hardBtn);
+
+            int imageWidth = WIDTH / 4;
+            ImageView whiteImageView = new ImageView( new Image(Main.class.getResourceAsStream("../images/white.png"), imageWidth, imageWidth, true, true) );
+            ImageView blackImageView = new ImageView( new Image(Main.class.getResourceAsStream("../images/black.png"), imageWidth, imageWidth, true, true) );
+            whiteImageView.setOpacity(0.5);
+
+            whiteImageView.setOnMouseEntered(event -> {whiteImageView.setOpacity(1.0); blackImageView.setOpacity(0.5);});
+            blackImageView.setOnMouseEntered(event -> {whiteImageView.setOpacity(0.5); blackImageView.setOpacity(1.0);});
+
+            HBox stoneBtns = new HBox();
+            stoneBtns.setStyle("-fx-alignment: center;");
+            stoneBtns.setSpacing(20.0);
+            stoneBtns.getChildren().addAll(blackImageView, whiteImageView);
             
             Label difficultyLabel = new Label("Difficulty");
             Label boardSizeLabel = new Label("Board size");
-            getChildren().addAll(boardSizeLabel, boardSizeBtns, difficultyLabel, difficultyBtns, playAndBackBtns);
+            getChildren().addAll(boardSizeLabel, boardSizeBtns, difficultyLabel, difficultyBtns, stoneBtns, playAndBackBtns);
         }
     }
 

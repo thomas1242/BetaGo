@@ -35,34 +35,32 @@ public class Game {
         if (board.countCapturedStones(color) == 1) {
             Pair<Integer, Integer> capturedStone = board.captureSingleStone(color);
             MoveData currMove = new MoveData(capturedStone, 1);
-            if (prevMove != null && currMove.equals(prevMove))                           // check for ko rule
+            if (prevMove != null && currMove.equals(prevMove))           // check for ko rule
                 isRepeatPosition = true;
         }
 
-        board.removeStoneFromBoard(row, col);                                               // undo move
+        board.removeStoneFromBoard(row, col);                            // undo move
         return isRepeatPosition;
     }
 
-    public void playerMove(int row, int col) {
-        Player currentPlayer = getCurrentPlayer();
-        // System.out.println((currentPlayer.getColor() == Color.WHITE ? "WHITE" : "BLACK") + " attempt to place stone at [" + row + "," + col + "]");
+    public void playerMove(int row, int col) {  // precondition: move must be valid
+        if (!isValidMove(row, col))
+            throw new RuntimeException("Invalid move!");
 
-        if (!isValidMove(row, col)) {
-            System.out.println("INVALID MOVE!! TRY AGAIN!");
-            return;
-        }
+        Player currentPlayer = getCurrentPlayer();
 
         board.placeStoneOnBoard(row, col, currentPlayer.getColor());                // make move
+
         int numStonesCaptured = board.captureStones(currentPlayer.getColor());      // capture enemy stones
         currentPlayer.incrementStonesCaptured(numStonesCaptured);                   // increment score by # stones captured
 
         prevMove = new MoveData(row, col, numStonesCaptured);
         lastTurnPassed = false;
-        // System.out.println(toString());
     }
 
     public void passTurn() {
-        if(lastTurnPassed) System.exit(0);
+        if(lastTurnPassed)
+            System.exit(0);      // game over
         nextTurn();
         lastTurnPassed = true;
     }
@@ -94,7 +92,8 @@ public class Game {
 
     public void restartGame() {
         board.clearBoard();
-        for (Player p : players) p.resetScore();
+        for (Player p : players)
+            p.resetScore();
         turn = 0;
         lastTurnPassed = false;
         prevMove = null;
