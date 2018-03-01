@@ -1,0 +1,79 @@
+.root {
+    -fx-base: rgb(132, 145, 47);
+    -fx-background-image: url("../images/background1.jpg");
+    -fx-font-family: "Courier New";
+}
+
+.button, .label {
+    -fx-font-weight: bold;
+    -fx-text-fill: black;
+}
+
+// Home Screen ---------------------------------------------
+
+.homeScreen {
+    -fx-alignment: center;
+    -fx-font-size: 32pt;
+    -fx-spacing: 10;
+    -fx-background-image: url("../images/background1.jpg");
+    -fx-background-repeat: stretch;
+}
+
+.homeScreenLabel {
+    -fx-font-size: 72pt;
+    -fx-alignment: center;
+}
+
+.homeScreenButton {
+    -fx-font-size: 32pt;
+    -fx-border-color: black;
+}
+
+.newGameOptions{
+    -fx-alignment: center;
+    -fx-font-size: 18pt;
+}
+
+// Game Play Screen ---------------------------------------------
+
+.boardView {
+     -fx-background-image: url("../images/wood.jpg");
+}
+
+.sidePanel {
+     -fx-alignment: center;
+     -fx-spacing: 10;
+     -fx-background-image: url("../images/background.jpg");
+     -fx-border-color: transparent transparent transparent black;
+}
+
+.sidePanelButton {
+     -fx-font-size: 12pt;
+     -fx-border-color: black;
+}
+
+.sidePanelLabel {
+    -fx-font-size: 11pt;
+    -fx-font-family: "Verdana";
+}
+
+// ----
+
+.humanVsHumanScreen {
+    -fx-alignment: center;
+    -fx-font-size: 30pt;
+    -fx-spacing: 30;
+    -fx-background-image: url("../images/background.jpg");
+    -fx-background-repeat: stretch;
+}
+
+.boardSizeButtons {
+    -fx-font-size: 32pt;
+    -fx-spacing: 10;
+}
+
+.playBackButtons {
+    -fx-spacing: 50;
+    -fx-alignment: center;
+    -fx-font-size: 26pt;
+}
