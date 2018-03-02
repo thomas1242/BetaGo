@@ -99,6 +99,11 @@ public class Game {
         prevMove = null;
     }
 
+    public void setPlayerNames(String playerOne, String playerTwo) {
+        players[0].setName(playerOne);
+        players[1].setName(playerTwo);
+    }
+
 }
 
 class MoveData {

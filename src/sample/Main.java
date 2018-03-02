@@ -52,6 +52,7 @@ public class Main extends Application {
         }
 
         public void displayGamePlayScreen() {
+            updateGamePlayScreen();
             displayScreen(gamePlayScreen);
         }
 
@@ -182,8 +183,13 @@ public class Main extends Application {
 
     class SidePanel extends VBox {
         private Label label;
+        int imageWidth = (int)(WIDTH * 0.20);
 
-         SidePanel() {
+        private ImageView whiteImageView = new ImageView( new Image(Main.class.getResourceAsStream("../images/white.png"), imageWidth, imageWidth, true, true) );
+        private ImageView blackImageView = new ImageView( new Image(Main.class.getResourceAsStream("../images/black.png"), imageWidth, imageWidth, true, true) );
+        private ImageView currPlayerImage = new ImageView(blackImageView.getImage());
+
+        SidePanel() {
             getStyleClass().add("sidePanel");
 
             Button homeScreenBtn = new Button("Home Screen");
@@ -215,12 +221,18 @@ public class Main extends Application {
                 button.getStyleClass().add("sidePanelButton");
             }
 
-            getChildren().addAll(label, passTurnBtn, exitBtn, newGameBtn, homeScreenBtn);
+            getChildren().addAll(label, currPlayerImage, passTurnBtn, exitBtn, newGameBtn, homeScreenBtn);
         }
 
         private void updateLabel() {
-            label.setText(game.getCurrentPlayer().getName() + "'s turn\nP1: " + game.getPlayers()[0].numStonesCaptured() + "\nP2: " + game.getPlayers()[1].numStonesCaptured());
-         }
+            // label.setText(game.getCurrentPlayer().getName() + "'s turn\n" + game.getPlayers()[0].getName() + " " + game.getPlayers()[0].numStonesCaptured() + "\n" + game.getPlayers()[1].getName() + " " + game.getPlayers()[1].numStonesCaptured());
+            label.setText(game.getCurrentPlayer().getName() + "'s turn");
+
+            if (game.getCurrentPlayer().getColor() == Color.BLACK)
+                currPlayerImage.setImage(blackImageView.getImage());
+            else
+                currPlayerImage.setImage(whiteImageView.getImage());
+        }
     }
 
     class HomeScreen extends VBox {
@@ -292,10 +304,15 @@ public class Main extends Application {
             getStyleClass().add("playBackButtons");
 
             Button playBtn = new Button("Play");
-            playBtn.setOnAction(e -> gameView.displayGamePlayScreen());
+            playBtn.setOnAction(e -> {
+                gameView.displayGamePlayScreen();
+            });
 
             Button backBtn = new Button("Back");
             backBtn.setOnAction(e -> gameView.displayHomeScreen());
+
+            playBtn.setStyle("-fx-border-color: black;");
+            backBtn.setStyle("-fx-border-color: black;");
 
             playBtn.setMinWidth(WIDTH * .5);
             backBtn.setMinWidth(WIDTH * .5);
@@ -344,6 +361,9 @@ public class Main extends Application {
             TextField playerOneName = new TextField("Player 1");
             TextField playerTwoName = new TextField("Player 2");
 
+            playerOneName.setOnKeyReleased(event -> game.setPlayerNames(playerOneName.getText(), playerTwoName.getText()));
+            playerTwoName.setOnKeyReleased(event -> game.setPlayerNames(playerOneName.getText(), playerTwoName.getText()));
+
             nameSelectGrid.add(blackImageView, 0, 1);
             nameSelectGrid.add(playerOneName,  1, 1);
             nameSelectGrid.add(whiteImageView, 0, 2);
@@ -383,8 +403,8 @@ public class Main extends Application {
             ImageView blackImageView = new ImageView( new Image(Main.class.getResourceAsStream("../images/black.png"), imageWidth, imageWidth, true, true) );
             whiteImageView.setOpacity(0.5);
 
-            whiteImageView.setOnMouseEntered(event -> {whiteImageView.setOpacity(1.0); blackImageView.setOpacity(0.5);});
-            blackImageView.setOnMouseEntered(event -> {whiteImageView.setOpacity(0.5); blackImageView.setOpacity(1.0);});
+            whiteImageView.setOnMouseClicked(event -> {whiteImageView.setOpacity(1.0); blackImageView.setOpacity(0.5);});
+            blackImageView.setOnMouseClicked(event -> {whiteImageView.setOpacity(0.5); blackImageView.setOpacity(1.0);});
 
             HBox stoneBtns = new HBox();
             stoneBtns.setStyle("-fx-alignment: center;");
