@@ -30,7 +30,7 @@ public class Main extends Application {
         gameView = new GameView();
         gameView.getStylesheets().add("sample/stylesheet.css");
         gameView.setPrefSize(WIDTH, HEIGHT);
-        gameView.displayGamePlayScreen();
+        gameView.displayHomeScreen();
 
         primaryStage.setTitle("BetaGo");
         primaryStage.setScene( new Scene(gameView, WIDTH / 0.80, HEIGHT) );
@@ -39,12 +39,12 @@ public class Main extends Application {
 
     class GameView extends StackPane {
 
-        private GamePlayScreen gamePlayScreen;
         private HomeScreen homeScreen;
+        private GamePlayScreen gamePlayScreen;
 
         GameView() {
-            gamePlayScreen = new GamePlayScreen();
             homeScreen = new HomeScreen();
+            gamePlayScreen = new GamePlayScreen();
         }
 
         public void displayHomeScreen() {
@@ -140,12 +140,12 @@ public class Main extends Application {
         private void drawBoardState() {
             drawBackground();
 
-            Point[][] stones = game.getBoard().getPoints();
+            Point[][] points = game.getBoard().getPoints();
 
-            for (int i = 0; i < stones.length; i++)
-                for (int j = 0; j < stones.length; j++)
-                    if(stones[i][j] != null && stones[i][j].getStone() != null)
-                        drawCircle(i, j, stones[i][j].getStone().getColor());
+            for (int i = 0; i < points.length; i++)
+                for (int j = 0; j < points.length; j++)
+                    if(points[i][j].getStone() != null)
+                        drawCircle(i, j, points[i][j].getStone().getColor());
         }
 
         private void drawCircle(double row, double col, Paint p) {
@@ -225,8 +225,8 @@ public class Main extends Application {
         }
 
         private void updateLabel() {
-            // label.setText(game.getCurrentPlayer().getName() + "'s turn\n" + game.getPlayers()[0].getName() + " " + game.getPlayers()[0].numStonesCaptured() + "\n" + game.getPlayers()[1].getName() + " " + game.getPlayers()[1].numStonesCaptured());
-            label.setText(game.getCurrentPlayer().getName() + "'s turn");
+            label.setText(game.getCurrentPlayer().getName() + "'s turn\n" +
+                    game.getPlayers()[0].getName() + ": " + game.getPlayers()[0].numStonesCaptured() + "\n" + game.getPlayers()[1].getName() + ": " + game.getPlayers()[1].numStonesCaptured());
 
             if (game.getCurrentPlayer().getColor() == Color.BLACK)
                 currPlayerImage.setImage(blackImageView.getImage());
@@ -242,8 +242,8 @@ public class Main extends Application {
         private Button exitBtn;
         private VBox newGameOptions;
 
-        HumanVsHumanScreen humanVsHumanScreen;
-        HumanVsComputerScreen humanVsComputerScreen;
+        private HumanVsHumanScreen humanVsHumanScreen;
+        private HumanVsComputerScreen humanVsComputerScreen;
 
         HomeScreen() {
             getStyleClass().add("homeScreen");
