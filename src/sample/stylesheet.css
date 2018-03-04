@@ -83,3 +83,10 @@
     -fx-alignment: center;
     -fx-font-size: 26pt;
 }
+
+.endGamePopup {
+    -fx-background-image: url("../images/background2.jpg");
+    -fx-alignment: center;
+    -fx-font-size: 22pt;
+    -fx-spacing: 15;
+}

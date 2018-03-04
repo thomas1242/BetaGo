@@ -7,6 +7,7 @@ import javafx.scene.control.*;
 import javafx.scene.image.*;
 import javafx.scene.layout.*;
 import javafx.scene.paint.*;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 import sample.Model.*;
 import sample.Model.Utility.*;
@@ -18,6 +19,7 @@ public class Main extends Application {
 
     private Game game;
     private GameView gameView;
+    private Stage primaryStage;
 
     public static void main(String[] args) {
         launch(args);
@@ -25,6 +27,7 @@ public class Main extends Application {
 
     @Override
     public void start(Stage primaryStage) {
+        this.primaryStage = primaryStage;
         game = new Game();
 
         gameView = new GameView();
@@ -41,10 +44,12 @@ public class Main extends Application {
 
         private HomeScreen homeScreen;
         private GamePlayScreen gamePlayScreen;
+        private GameOverPopUpScreen gameOverPopUpScreen;
 
         GameView() {
             homeScreen = new HomeScreen();
             gamePlayScreen = new GamePlayScreen();
+            gameOverPopUpScreen = new GameOverPopUpScreen(primaryStage);
         }
 
         public void displayHomeScreen() {
@@ -58,11 +63,18 @@ public class Main extends Application {
 
         public void updateGamePlayScreen() {
             gamePlayScreen.update();
+            if(game.isGameOver()) gameView.displayGameOverPopup();
+
         }
 
         public void displayScreen(Node screen) {
+            gameOverPopUpScreen.hide();
             this.getChildren().removeAll(this.getChildren());
             this.getChildren().add(screen);
+        }
+
+        public void displayGameOverPopup() {
+            gameOverPopUpScreen.display();
         }
     }
 
@@ -86,7 +98,7 @@ public class Main extends Application {
         }
 
         public void update() {
-            boardView.drawBoardState();
+            boardView.update();
             sidePanel.updateLabel();
         }
 
@@ -113,7 +125,7 @@ public class Main extends Application {
                 int row = position.getValue(), col = position.getKey();
 
                 if(game.isValidMove(row, col)) {
-                    drawBoardState();                                           // draw board on top of previously drawn valid move
+                    update();                                           // draw board on top of previously drawn valid move
                                                                                 // draw valid move on top of board
                     if(game.getCurrentPlayer().getColor() == Color.WHITE)
                         drawCircle(row, col, new Color(1, 1, 1, 0.5));
@@ -123,7 +135,7 @@ public class Main extends Application {
 
             });
 
-            setOnMouseExited(event -> drawBoardState());
+            setOnMouseExited(event -> update());
 
             drawBackground();
         }
@@ -131,13 +143,18 @@ public class Main extends Application {
         private void attemptToPlaceStone(int row, int col) {
             if(game.isValidMove(row, col)) {
                 game.playerMove(row, col);
-                game.nextTurn();
 
-                gameView.updateGamePlayScreen();
+                if(game.isGameOver()) {
+                    gameView.displayGameOverPopup();
+                }
+                else {
+                    game.nextTurn();
+                    gameView.updateGamePlayScreen();
+                }
             }
         }
 
-        private void drawBoardState() {
+        private void update() {
             drawBackground();
 
             Point[][] points = game.getBoard().getPoints();
@@ -221,12 +238,12 @@ public class Main extends Application {
                 button.getStyleClass().add("sidePanelButton");
             }
 
-            getChildren().addAll(label, currPlayerImage, passTurnBtn, exitBtn, newGameBtn, homeScreenBtn);
+            getChildren().addAll(label, currPlayerImage, passTurnBtn, newGameBtn, homeScreenBtn, exitBtn);
         }
 
         private void updateLabel() {
             label.setText(game.getCurrentPlayer().getName() + "'s turn\n" +
-                    game.getPlayers()[0].getName() + ": " + game.getPlayers()[0].numStonesCaptured() + "\n" + game.getPlayers()[1].getName() + ": " + game.getPlayers()[1].numStonesCaptured());
+                    game.getPlayers()[0].getName() + ": " + game.getPlayers()[0].getNumStonesCaptured() + "\n" + game.getPlayers()[1].getName() + ": " + game.getPlayers()[1].getNumStonesCaptured());
 
             if (game.getCurrentPlayer().getColor() == Color.BLACK)
                 currPlayerImage.setImage(blackImageView.getImage());
@@ -252,7 +269,9 @@ public class Main extends Application {
             label.getStyleClass().add("homeScreenLabel");
 
             newGameBtn = new Button("New Game");
-            newGameBtn.setOnAction(e -> gameView.displayGamePlayScreen());
+            newGameBtn.setOnAction(e -> {
+                gameView.displayGamePlayScreen();
+            });
 
             exitBtn = new Button("Quit");
             exitBtn.setOnAction(e -> System.exit(0));
@@ -261,14 +280,20 @@ public class Main extends Application {
             humanVsComputerScreen = new HumanVsComputerScreen();
 
             Button vsHumanBtn = new Button("Human vs Human");
-            vsHumanBtn.setOnAction(e -> gameView.displayScreen(humanVsHumanScreen));
+            vsHumanBtn.setOnAction(e -> {
+                game = new Game();
+                gameView.displayScreen(humanVsHumanScreen);
+            });
             vsHumanBtn.setMinWidth(WIDTH * .5);
 
             Button vsComputerBtn = new Button("Human vs Computer");
-            vsComputerBtn.setOnAction(e -> gameView.displayScreen(humanVsComputerScreen));
+            vsComputerBtn.setOnAction(e -> {
+                game = new Game();
+                gameView.displayScreen(humanVsComputerScreen);
+            });
             vsComputerBtn.setMinWidth(WIDTH * .5);
 
-            vsHumanBtn.setStyle("-fx-border-color: black;");            // TODO: use .css file
+            vsHumanBtn.setStyle("-fx-border-color: black;");
             vsComputerBtn.setStyle("-fx-border-color: transparent black black black;");
 
             for(Button button : new Button[]{newGameBtn, exitBtn}) {
@@ -415,6 +440,77 @@ public class Main extends Application {
             Label boardSizeLabel = new Label("Board size");
             getChildren().addAll(boardSizeLabel, boardSizeBtns, difficultyLabel, difficultyBtns, stoneBtns, playAndBackBtns);
         }
+    }
+
+    class GameOverPopUpScreen extends Stage {
+
+        private Stage dialog;
+        private Label scoreLabel;
+
+        GameOverPopUpScreen(Stage primaryStage) {
+            dialog = new Stage();
+            dialog.initModality(Modality.APPLICATION_MODAL);
+            dialog.initOwner(primaryStage);
+
+            Label gameOverLabel = new Label("GAME OVER!");
+            gameOverLabel.setStyle("-fx-font-size: 44pt;");
+
+            scoreLabel = new Label("");
+            scoreLabel.setStyle("-fx-font-size: 30pt;");
+
+            Button homeScreenBtn = new Button("Home Screen");
+            homeScreenBtn.setOnAction(e -> {
+                this.hide();
+                gameView.displayHomeScreen();
+            });
+
+            Button playAgainBtn = new Button("Play again");
+            playAgainBtn.setOnAction(e -> {
+                this.hide();
+                game.restartGame();
+            });
+
+            Button quitBtn = new Button("Quit");
+            quitBtn.setOnAction(e -> System.exit(0) );
+
+            quitBtn.setStyle("-fx-border-color: black; -fx-font-size: 18pt;");
+            homeScreenBtn.setStyle("-fx-border-color: black; -fx-font-size: 18pt;");
+            playAgainBtn.setStyle("-fx-border-color: black; -fx-font-size: 18pt;");
+
+            quitBtn.setMinWidth(WIDTH * (1.2 * 3/4) * .20);
+            playAgainBtn.setMinWidth(WIDTH * (1.2 * 3/4) * .20);
+            homeScreenBtn.setMinWidth(WIDTH * (1.2 * 3/4) * .20);
+
+            HBox hBox = new HBox(20);
+            hBox.getChildren().addAll(playAgainBtn, homeScreenBtn, quitBtn);
+            hBox.setStyle("-fx-alignment: center;");
+
+            VBox dialogVbox = new VBox(20);
+            dialogVbox.getStyleClass().add("endGamePopup");
+            dialogVbox.getChildren().addAll(gameOverLabel, scoreLabel, hBox);
+
+            Scene dialogScene = new Scene(dialogVbox, WIDTH * (1.2 * 3/4), HEIGHT* (1.0 * 3/4));
+            dialogScene.getStylesheets().add("sample/stylesheet.css");
+
+            dialog.setOnCloseRequest(event -> System.exit(0));
+            dialog.setOpacity(.80);
+            dialog.setScene(dialogScene);
+        }
+
+        public void display() {
+            String winner = game.getPlayers()[0].getNumStonesCaptured() > game.getPlayers()[1].getNumStonesCaptured()
+                            ? game.getPlayers()[0].getName() : game.getPlayers()[1].getName();
+
+            scoreLabel.setText(winner + " wins!\n" +
+                               game.getPlayers()[0].getName() + ": " + game.getPlayers()[0].getNumStonesCaptured() + "\n" +
+                               game.getPlayers()[1].getName() + ": " + game.getPlayers()[1].getNumStonesCaptured());
+            dialog.show();
+        }
+
+        public void hide() {
+            dialog.hide();
+        }
+        
     }
 
 }

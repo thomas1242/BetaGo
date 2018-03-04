@@ -10,12 +10,15 @@ public class Game {
     private MoveData prevMove;          // ko rule
     private boolean lastTurnPassed;
 
+    private boolean gameInPlay;
+
     public Game() {
         players = new Player[]{
                                  new Player("Player 1", Color.BLACK),
                                  new Player("Player 2", Color.WHITE)
                               };
         setBoardSize(9);
+        gameInPlay = true;
     }
 
     public void setBoardSize(int size) {
@@ -60,9 +63,15 @@ public class Game {
 
     public void passTurn() {
         if(lastTurnPassed)
-            System.exit(0);      // game over
-        nextTurn();
-        lastTurnPassed = true;
+            gameInPlay = false;
+        else {
+            nextTurn();
+            lastTurnPassed = true;
+        }
+    }
+
+    public boolean isGameOver() {
+        return !gameInPlay;
     }
 
     public void nextTurn() {
@@ -71,7 +80,7 @@ public class Game {
 
     @Override
     public String toString() {
-        return board.toString() + "SCORES P1: " + players[0].numStonesCaptured() + " P2: " + players[1].numStonesCaptured() + '\n';
+        return board.toString() + "SCORES P1: " + players[0].getNumStonesCaptured() + " P2: " + players[1].getNumStonesCaptured() + '\n';
     }
 
     public Player getCurrentPlayer() {
@@ -97,6 +106,7 @@ public class Game {
         turn = 0;
         lastTurnPassed = false;
         prevMove = null;
+        gameInPlay = true;
     }
 
     public void setPlayerNames(String playerOne, String playerTwo) {

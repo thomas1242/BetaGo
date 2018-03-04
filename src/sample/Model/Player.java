@@ -20,7 +20,7 @@ public class Player {
         enemyStonesCaptured += n;
     }
 
-    public int numStonesCaptured() {
+    public int getNumStonesCaptured() {
         return enemyStonesCaptured;
     }
 

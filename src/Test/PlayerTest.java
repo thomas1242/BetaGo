@@ -22,8 +22,8 @@ class PlayerTest {
         player1.incrementStonesCaptured(-5);
         player2.incrementStonesCaptured(20);
         player2.incrementStonesCaptured(-5);
-        assertEquals(player1.numStonesCaptured(), 5);
-        assertEquals(player2.numStonesCaptured(), 15);
+        assertEquals(player1.getNumStonesCaptured(), 5);
+        assertEquals(player2.getNumStonesCaptured(), 15);
     }
 
 }

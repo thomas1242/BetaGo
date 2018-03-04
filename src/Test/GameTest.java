@@ -37,7 +37,7 @@ class GameTest {
         game.playerMove(7, 8);
         assertEquals(true, game.isValidMove(8, 7));
         game.playerMove(8, 7);
-        assertEquals(1, game.getCurrentPlayer().numStonesCaptured());
+        assertEquals(1, game.getCurrentPlayer().getNumStonesCaptured());
         game.nextTurn();
         assertEquals(false, game.isValidMove(8, 8)); // ko rule
     }
@@ -61,7 +61,7 @@ class GameTest {
         game.nextTurn();
         assertEquals(true, game.isValidMove(4, 3)); // capture
         game.playerMove(4, 3);
-        assertEquals(game.getCurrentPlayer().numStonesCaptured(), 1);
+        assertEquals(game.getCurrentPlayer().getNumStonesCaptured(), 1);
 
         game.nextTurn();
         assertEquals(false, game.isValidMove( 4, 4)); // ko rule
