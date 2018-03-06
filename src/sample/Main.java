@@ -418,7 +418,6 @@ public class Main extends Application {
             easyBtn.getStyleClass().add("boardSizeButtons");
             easyBtn.setMinWidth(WIDTH / 5);
             easyBtn.setOnAction(event -> {
-                game.getPlayers()[1].enableAI();
                 hardBtn.setStyle("fx-base: #666666;");
                 easyBtn.setStyle("-fx-base: #00802b;");
             });
@@ -426,11 +425,9 @@ public class Main extends Application {
             hardBtn.getStyleClass().add("boardSizeButtons");
             hardBtn.setMinWidth(WIDTH / 5);
             hardBtn.setOnAction(event -> {
-                game.getPlayers()[1].enableAI();
                 easyBtn.setStyle("fx-base: #666666;");
                 hardBtn.setStyle("-fx-base: #00802b;");
             });
-
             easyBtn.setStyle("-fx-base: #00802b;");
             
             HBox difficultyBtns = new HBox();
@@ -520,7 +517,7 @@ public class Main extends Application {
             dialogScene.getStylesheets().add("sample/stylesheet.css");
 
             dialog.setOnCloseRequest(event -> System.exit(0));
-            dialog.setOpacity(.80);
+            dialog.setOpacity(.70);
             dialog.setScene(dialogScene);
         }
 

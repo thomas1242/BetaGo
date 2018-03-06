@@ -52,7 +52,6 @@ public class Game {
             throw new RuntimeException("Invalid move!");
 
         Player currentPlayer = getCurrentPlayer();
-
         board.placeStoneOnBoard(row, col, currentPlayer.getColor());                // make move
 
         int numStonesCaptured = board.captureStones(currentPlayer.getColor());      // capture enemy stones
