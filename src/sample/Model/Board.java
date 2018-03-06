@@ -58,13 +58,13 @@ public class Board {
             for (Stone s : q2)
                 numLiberties += Stone.getNumLiberties(s, new HashSet<>());
 
-            if (numLiberties == 0)
+            if (numLiberties == 0) {
                 isValidMove = true;
+            }
 
-            for (int i = 0; i < board.length; i++)                      // check if stone captured
-                for (int j = 0; j < board.length; j++)
-                    if(board[i][j].getStone() != null && board[i][j].getStone().getColor() != color && Stone.getNumLiberties(board[i][j].getStone(), new HashSet<>()) == 0)
-                        isValidMove = true;
+            for (Stone adjStone : board[row][col].getStone().getAdjacentStones())   // check if capture any adjacent stones
+                if(adjStone.getColor() != color && Stone.getNumLiberties(adjStone, new HashSet<>()) == 0)
+                    isValidMove = true;
         }
 
         removeStoneFromBoard(row, col);         // remove stone so board state not modified by isValidMove() method
@@ -214,5 +214,14 @@ public class Board {
 
     public Point[][] getPoints() {   // used for testing purposes
         return board;
+    }
+
+    public List<Pair<Integer, Integer>> validMoves(Color color) {
+        List<Pair<Integer, Integer>> moves = new LinkedList<>();
+        for (int i = 0; i < board.length; i++)
+            for (int j = 0; j < board.length; j++)
+                if(isValidMove(i, j, color))
+                    moves.add(new Pair<>(i, j));
+        return moves;
     }
 }

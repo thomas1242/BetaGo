@@ -6,10 +6,23 @@ public class Player {
     private Color color;
     private String name;
     private int enemyStonesCaptured;
+    private boolean isUsingAI;
 
     public Player(String name, Color color) {
         this.name = name;
         this.color = color;
+    }
+
+    public void enableAI() {
+        isUsingAI = true;
+    }
+
+    public void disableAI() {
+        isUsingAI = false;
+    }
+
+    public boolean isUsingAI() {
+        return isUsingAI;
     }
 
     public Color getColor() {

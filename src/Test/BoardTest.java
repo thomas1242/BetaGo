@@ -51,9 +51,9 @@ class BoardTest {
         board.placeStoneOnBoard(0, 2, Color.WHITE);
 
         assertEquals(board.captureStones(Color.WHITE), 3);  // check that white player captured 3 black stones
-        assertEquals(board.getPoints()[0][0], null);         // check that stone was removed from board
-        assertEquals(board.getPoints()[1][0], null);         // check that stone was removed from board
-        assertEquals(board.getPoints()[0][1], null);         // check that stone was removed from board
+        assertEquals(board.getPoints()[0][0].getStone(), null);         // check that stone was removed from board
+        assertEquals(board.getPoints()[1][0].getStone(), null);         // check that stone was removed from board
+        assertEquals(board.getPoints()[0][1].getStone(), null);         // check that stone was removed from board
         assertEquals(4, Stone.getNumLiberties(board.getPoints()[1][1].getStone(), new HashSet<>()));
 
         board.placeStoneOnBoard(0, 1, Color.BLACK);
@@ -74,7 +74,7 @@ class BoardTest {
         board.placeStoneOnBoard(0, 1, Color.BLACK);
 
         assertEquals(board.captureStones(Color.BLACK), 1);  // check that black player captured 1 white stone
-        assertEquals(board.getPoints()[0][0], null);         // check that stone was removed from board
+        assertEquals(board.getPoints()[0][0].getStone(), null);         // check that stone was removed from board
 
         assertEquals(board.isValidMove(0, 0, Color.WHITE), false);   // test if suicide move in corner valid
         assertEquals(board.isValidMove(0, 0, Color.BLACK), true);
@@ -93,9 +93,9 @@ class BoardTest {
         board.placeStoneOnBoard(0, 2, Color.WHITE);
 
         assertEquals(board.captureStones(Color.WHITE), 3);  // check that white player captured 3 black stones
-        assertEquals(board.getPoints()[0][0], null);         // check that stone was removed from board
-        assertEquals(board.getPoints()[1][0], null);         // check that stone was removed from board
-        assertEquals(board.getPoints()[0][1], null);         // check that stone was removed from board
+        assertEquals(board.getPoints()[0][0].getStone(), null);         // check that stone was removed from board
+        assertEquals(board.getPoints()[1][0].getStone(), null);         // check that stone was removed from board
+        assertEquals(board.getPoints()[0][1].getStone(), null);         // check that stone was removed from board
     }
 
     @Test
@@ -111,9 +111,9 @@ class BoardTest {
         board.placeStoneOnBoard(0, 2, Color.WHITE);
 
         assertEquals(board.captureStones(Color.WHITE), 3);  // check that white player captured 3 black stones
-        assertEquals(board.getPoints()[0][0], null);         // check that stone was removed from board
-        assertEquals(board.getPoints()[1][0], null);         // check that stone was removed from board
-        assertEquals(board.getPoints()[0][1], null);         // check that stone was removed from board
+        assertEquals(board.getPoints()[0][0].getStone(), null);         // check that stone was removed from board
+        assertEquals(board.getPoints()[1][0].getStone(), null);         // check that stone was removed from board
+        assertEquals(board.getPoints()[0][1].getStone(), null);         // check that stone was removed from board
 
         board.placeStoneOnBoard(0, 1, Color.BLACK);
         board.placeStoneOnBoard(1, 0, Color.BLACK);
@@ -137,10 +137,10 @@ class BoardTest {
         board.placeStoneOnBoard(4, 4, Color.WHITE);
         assertEquals(board.captureStones(Color.WHITE), 4);  // check that white player captured 4 black stones
 
-        assertEquals(board.getPoints()[3][4], null);
-        assertEquals(board.getPoints()[5][4], null);
-        assertEquals(board.getPoints()[4][3], null);
-        assertEquals(board.getPoints()[4][5], null);
+        assertEquals(board.getPoints()[3][4].getStone(), null);
+        assertEquals(board.getPoints()[5][4].getStone(), null);
+        assertEquals(board.getPoints()[4][3].getStone(), null);
+        assertEquals(board.getPoints()[4][5].getStone(), null);
     }
 
     @Test
@@ -162,10 +162,10 @@ class BoardTest {
         isValid &= !board.isValidMove(0, -1, Color.BLACK);
         assertEquals( isValid, true );
 
-        assertEquals(board.getPoints()[0][0], null);             // check to make sure board not modified
-        assertEquals(board.getPoints()[size - 1][0], null);
-        assertEquals(board.getPoints()[0][size - 1], null);
-        assertEquals(board.getPoints()[size - 1][size - 1], null);
+        assertEquals(board.getPoints()[0][0].getStone(), null);             // check to make sure board not modified
+        assertEquals(board.getPoints()[size - 1][0].getStone(), null);
+        assertEquals(board.getPoints()[0][size - 1].getStone(), null);
+        assertEquals(board.getPoints()[size - 1][size - 1].getStone(), null);
     }
 
 }

@@ -2,6 +2,8 @@ package sample.Model;
 import javafx.scene.paint.Color;
 import sample.Model.Utility.Pair;
 
+import java.util.List;
+
 public class Game {
     private Player[] players;
     private Board board;
@@ -10,7 +12,7 @@ public class Game {
     private MoveData prevMove;          // ko rule
     private boolean lastTurnPassed;
 
-    private boolean gameInPlay;
+    private boolean isGameOver;
 
     public Game() {
         players = new Player[]{
@@ -18,7 +20,6 @@ public class Game {
                                  new Player("Player 2", Color.WHITE)
                               };
         setBoardSize(9);
-        gameInPlay = true;
     }
 
     public void setBoardSize(int size) {
@@ -33,8 +34,8 @@ public class Game {
 
     private boolean isRepeatBoardPosition(int row, int col, Color color) {
         boolean isRepeatPosition = false;
-
         board.placeStoneOnBoard(row, col, color);                        // make move
+
         if (board.countCapturedStones(color) == 1) {
             Pair<Integer, Integer> capturedStone = board.captureSingleStone(color);
             MoveData currMove = new MoveData(capturedStone, 1);
@@ -59,23 +60,27 @@ public class Game {
 
         prevMove = new MoveData(row, col, numStonesCaptured);
         lastTurnPassed = false;
+        nextTurn();
     }
 
     public void passTurn() {
         if(lastTurnPassed)
-            gameInPlay = false;
+            isGameOver = true;
         else {
-            nextTurn();
             lastTurnPassed = true;
+            nextTurn();
         }
     }
 
     public boolean isGameOver() {
-        return !gameInPlay;
+        return isGameOver;
     }
 
     public void nextTurn() {
         turn = ++turn % 2;
+
+        if( getCurrentPlayer().isUsingAI() )    // AI plays
+            AI.makeMove(this);
     }
 
     @Override
@@ -104,14 +109,25 @@ public class Game {
         for (Player p : players)
             p.resetScore();
         turn = 0;
+
+        isGameOver = false;
         lastTurnPassed = false;
         prevMove = null;
-        gameInPlay = true;
+
+        if(getCurrentPlayer().isUsingAI())
+            AI.makeMove(this);
     }
 
-    public void setPlayerNames(String playerOne, String playerTwo) {
+    public void setPlayerOneName(String playerOne) {
         players[0].setName(playerOne);
+    }
+
+    public void setPlayerTwoName(String playerTwo) {
         players[1].setName(playerTwo);
+    }
+
+    public List<Pair<Integer, Integer>> validMoves() {
+        return board.validMoves(getCurrentPlayer().getColor());
     }
 
 }

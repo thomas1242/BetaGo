@@ -10,7 +10,7 @@ import javafx.scene.paint.*;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import sample.Model.*;
-import sample.Model.Utility.*;
+import sample.Model.Utility.Pair;
 
 public class Main extends Application {
 
@@ -19,7 +19,6 @@ public class Main extends Application {
 
     private Game game;
     private GameView gameView;
-    private Stage primaryStage;
 
     public static void main(String[] args) {
         launch(args);
@@ -27,10 +26,9 @@ public class Main extends Application {
 
     @Override
     public void start(Stage primaryStage) {
-        this.primaryStage = primaryStage;
         game = new Game();
 
-        gameView = new GameView();
+        gameView = new GameView(primaryStage);
         gameView.getStylesheets().add("sample/stylesheet.css");
         gameView.setPrefSize(WIDTH, HEIGHT);
         gameView.displayHomeScreen();
@@ -44,12 +42,12 @@ public class Main extends Application {
 
         private HomeScreen homeScreen;
         private GamePlayScreen gamePlayScreen;
-        private GameOverPopUpScreen gameOverPopUpScreen;
+        private GameOverPopUp gameOverPopUp;
 
-        GameView() {
+        GameView(Stage primaryStage) {
             homeScreen = new HomeScreen();
             gamePlayScreen = new GamePlayScreen();
-            gameOverPopUpScreen = new GameOverPopUpScreen(primaryStage);
+            gameOverPopUp = new GameOverPopUp(primaryStage);
         }
 
         public void displayHomeScreen() {
@@ -63,18 +61,18 @@ public class Main extends Application {
 
         public void updateGamePlayScreen() {
             gamePlayScreen.update();
-            if(game.isGameOver()) gameView.displayGameOverPopup();
-
+            if(game.isGameOver())
+                gameView.displayGameOverPopup();
         }
 
         public void displayScreen(Node screen) {
-            gameOverPopUpScreen.hide();
+            gameOverPopUp.hide();
             this.getChildren().removeAll(this.getChildren());
             this.getChildren().add(screen);
         }
 
         public void displayGameOverPopup() {
-            gameOverPopUpScreen.display();
+            gameOverPopUp.display();
         }
     }
 
@@ -141,17 +139,13 @@ public class Main extends Application {
         }
 
         private void attemptToPlaceStone(int row, int col) {
-            if(game.isValidMove(row, col)) {
+            if(game.isValidMove(row, col))
                 game.playerMove(row, col);
 
-                if(game.isGameOver()) {
-                    gameView.displayGameOverPopup();
-                }
-                else {
-                    game.nextTurn();
-                    gameView.updateGamePlayScreen();
-                }
-            }
+            if(game.isGameOver())
+                gameView.displayGameOverPopup();
+            else
+                gameView.updateGamePlayScreen();
         }
 
         private void update() {
@@ -330,6 +324,7 @@ public class Main extends Application {
 
             Button playBtn = new Button("Play");
             playBtn.setOnAction(e -> {
+                game.restartGame();
                 gameView.displayGamePlayScreen();
             });
 
@@ -350,22 +345,28 @@ public class Main extends Application {
         BoardSizeButtons() {
             getStyleClass().add("playBackButtons");
 
-            int[] boardSizes = new int[]{9, 13, 19};
-            for (Integer i : boardSizes) {
-                Button button = new Button(String.valueOf(i));
+            final int[] boardSizes = new int[]{9, 13, 19};
+            Button[] buttons = new Button[3];
 
-                final int boardSize = i;
-                button.setOnAction((ActionEvent e) -> {
-                    game.setBoardSize(boardSize);
+            for (int i = 0; i < buttons.length; i++) {
+                buttons[i] = new Button(String.valueOf(boardSizes[i]));
+                buttons[i].getStyleClass().add("boardSizeButtons");
+                buttons[i].setPrefWidth(WIDTH / 5);
+                buttons[i].setMinWidth(WIDTH / 5);
+
+                int finalI = i;
+                buttons[i].setOnAction((ActionEvent e) -> {
+                    for(Button btn : buttons) btn.setStyle("-fx-base: #666666;");
+                    buttons[finalI].setStyle("-fx-base: #00802b;");
+
+                    game.setBoardSize(boardSizes[finalI]);
                     gameView.updateGamePlayScreen();
                 });
 
-                button.getStyleClass().add("boardSizeButtons");
-                button.setPrefWidth(WIDTH / 5);
-                button.setMinWidth(WIDTH / 5);
-
-                getChildren().add(button);
+                getChildren().add(buttons[i]);
             }
+
+            buttons[0].setStyle("-fx-base: #00802b;");
         }
     }
 
@@ -386,8 +387,8 @@ public class Main extends Application {
             TextField playerOneName = new TextField("Player 1");
             TextField playerTwoName = new TextField("Player 2");
 
-            playerOneName.setOnKeyReleased(event -> game.setPlayerNames(playerOneName.getText(), playerTwoName.getText()));
-            playerTwoName.setOnKeyReleased(event -> game.setPlayerNames(playerOneName.getText(), playerTwoName.getText()));
+            playerOneName.setOnKeyReleased(event -> game.setPlayerOneName(playerOneName.getText()));
+            playerTwoName.setOnKeyReleased(event -> game.setPlayerTwoName(playerTwoName.getText()));
 
             nameSelectGrid.add(blackImageView, 0, 1);
             nameSelectGrid.add(playerOneName,  1, 1);
@@ -410,13 +411,26 @@ public class Main extends Application {
             PlayAndBackButtons playAndBackBtns = new PlayAndBackButtons();
             BoardSizeButtons boardSizeBtns = new BoardSizeButtons();
 
+            Button hardBtn = new Button("Hard");
             Button easyBtn = new Button("Easy");
+
             easyBtn.getStyleClass().add("boardSizeButtons");
             easyBtn.setMinWidth(WIDTH / 5);
+            easyBtn.setOnAction(event -> {
+                game.getPlayers()[1].enableAI();
+                hardBtn.setStyle("fx-base: #666666;");
+                easyBtn.setStyle("-fx-base: #00802b;");
+            });
 
-            Button hardBtn = new Button("Hard");
             hardBtn.getStyleClass().add("boardSizeButtons");
             hardBtn.setMinWidth(WIDTH / 5);
+            hardBtn.setOnAction(event -> {
+                game.getPlayers()[1].enableAI();
+                easyBtn.setStyle("fx-base: #666666;");
+                hardBtn.setStyle("-fx-base: #00802b;");
+            });
+
+            easyBtn.setStyle("-fx-base: #00802b;");
             
             HBox difficultyBtns = new HBox();
             difficultyBtns.setStyle("-fx-alignment: center;");
@@ -428,8 +442,20 @@ public class Main extends Application {
             ImageView blackImageView = new ImageView( new Image(Main.class.getResourceAsStream("../images/black.png"), imageWidth, imageWidth, true, true) );
             whiteImageView.setOpacity(0.5);
 
-            whiteImageView.setOnMouseClicked(event -> {whiteImageView.setOpacity(1.0); blackImageView.setOpacity(0.5);});
-            blackImageView.setOnMouseClicked(event -> {whiteImageView.setOpacity(0.5); blackImageView.setOpacity(1.0);});
+            whiteImageView.setOnMouseClicked(event -> {
+                game.getPlayers()[0].enableAI();
+                game.getPlayers()[1].disableAI();
+
+                whiteImageView.setOpacity(1.0);
+                blackImageView.setOpacity(0.5);
+            });
+            blackImageView.setOnMouseClicked(event -> {
+                game.getPlayers()[0].disableAI();
+                game.getPlayers()[1].enableAI();
+
+                whiteImageView.setOpacity(0.5);
+                blackImageView.setOpacity(1.0);
+            });
 
             HBox stoneBtns = new HBox();
             stoneBtns.setStyle("-fx-alignment: center;");
@@ -442,18 +468,18 @@ public class Main extends Application {
         }
     }
 
-    class GameOverPopUpScreen extends Stage {
+    class GameOverPopUp extends Stage {
 
         private Stage dialog;
         private Label scoreLabel;
 
-        GameOverPopUpScreen(Stage primaryStage) {
+        GameOverPopUp(Stage primaryStage) {
             dialog = new Stage();
             dialog.initModality(Modality.APPLICATION_MODAL);
             dialog.initOwner(primaryStage);
 
-            Label gameOverLabel = new Label("GAME OVER!");
-            gameOverLabel.setStyle("-fx-font-size: 44pt;");
+            Label gameOverLabel = new Label("GAME OVER");
+            gameOverLabel.setStyle("-fx-font-size: 44pt; -fx-border-width: 3; -fx-border-color: transparent transparent black transparent;");
 
             scoreLabel = new Label("");
             scoreLabel.setStyle("-fx-font-size: 30pt;");
@@ -485,7 +511,7 @@ public class Main extends Application {
             hBox.getChildren().addAll(playAgainBtn, homeScreenBtn, quitBtn);
             hBox.setStyle("-fx-alignment: center;");
 
-            VBox dialogVbox = new VBox(20);
+            VBox dialogVbox = new VBox(30);
             dialogVbox.getStyleClass().add("endGamePopup");
             dialogVbox.getChildren().addAll(gameOverLabel, scoreLabel, hBox);
 
@@ -510,7 +536,6 @@ public class Main extends Application {
         public void hide() {
             dialog.hide();
         }
-        
     }
 
 }
