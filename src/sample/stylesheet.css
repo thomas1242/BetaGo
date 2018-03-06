@@ -48,7 +48,7 @@
 .sidePanel {
      -fx-alignment: center;
      -fx-spacing: 10;
-     -fx-background-image: url("../images/background.jpg");
+     -fx-background-image: url("../images/background2.jpg");
      -fx-border-color: transparent transparent transparent black;
 }
 

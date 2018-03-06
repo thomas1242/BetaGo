@@ -377,18 +377,18 @@ public class Main extends Application {
             PlayAndBackButtons playAndBackBtns = new PlayAndBackButtons();
             BoardSizeButtons boardSizeBtns = new BoardSizeButtons();
 
+            TextField playerOneName = new TextField("Player 1");
+            TextField playerTwoName = new TextField("Player 2");
+
+            playerOneName.setOnKeyReleased(event -> game.setPlayerOneName(playerOneName.getText()));
+            playerTwoName.setOnKeyReleased(event -> game.setPlayerTwoName(playerTwoName.getText()));
+
             GridPane nameSelectGrid = new GridPane();
             nameSelectGrid.add( new Label("Players"), 0, 0, 2, 1);
 
             int imageWidth = WIDTH / 5;
             ImageView whiteImageView = new ImageView( new Image(Main.class.getResourceAsStream("../images/white.png"), imageWidth, imageWidth, true, true) );
             ImageView blackImageView = new ImageView( new Image(Main.class.getResourceAsStream("../images/black.png"), imageWidth, imageWidth, true, true) );
-
-            TextField playerOneName = new TextField("Player 1");
-            TextField playerTwoName = new TextField("Player 2");
-
-            playerOneName.setOnKeyReleased(event -> game.setPlayerOneName(playerOneName.getText()));
-            playerTwoName.setOnKeyReleased(event -> game.setPlayerTwoName(playerTwoName.getText()));
 
             nameSelectGrid.add(blackImageView, 0, 1);
             nameSelectGrid.add(playerOneName,  1, 1);
@@ -397,7 +397,8 @@ public class Main extends Application {
 
             nameSelectGrid.setPrefWidth(WIDTH / 5);
             nameSelectGrid.setMinWidth(WIDTH  / 5);
-            nameSelectGrid.setStyle("-fx-alignment: center;");
+            nameSelectGrid.setHgap(20);
+            nameSelectGrid.setStyle("-fx-alignment: center;" );
 
             Label boardSizeLabel = new Label("Board size");
             getChildren().addAll(boardSizeLabel, boardSizeBtns, nameSelectGrid, playAndBackBtns);
