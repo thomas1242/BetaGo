@@ -35,6 +35,7 @@ public class Main extends Application {
 
         primaryStage.setTitle("BetaGo");
         primaryStage.setScene( new Scene(gameView, WIDTH / 0.80, HEIGHT) );
+        primaryStage.setResizable(false);
         primaryStage.show();
     }
 
@@ -283,6 +284,7 @@ public class Main extends Application {
             Button vsComputerBtn = new Button("Human vs Computer");
             vsComputerBtn.setOnAction(e -> {
                 game = new Game();
+                game.getPlayers()[1].enableAI();
                 gameView.displayScreen(humanVsComputerScreen);
             });
             vsComputerBtn.setMinWidth(WIDTH * .5);
@@ -519,6 +521,7 @@ public class Main extends Application {
             dialog.setOnCloseRequest(event -> System.exit(0));
             dialog.setOpacity(.70);
             dialog.setScene(dialogScene);
+            dialog.setResizable(false);
         }
 
         public void display() {
