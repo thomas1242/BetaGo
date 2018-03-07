@@ -124,7 +124,7 @@ public class Main extends Application {
                 int row = position.getValue(), col = position.getKey();
 
                 if(game.isValidMove(row, col)) {
-                    update();                                           // draw board on top of previously drawn valid move
+                    update();                                                   // draw board on top of previously drawn valid move
                                                                                 // draw valid move on top of board
                     if(game.getCurrentPlayer().getColor() == Color.WHITE)
                         drawCircle(row, col, new Color(1, 1, 1, 0.5));
@@ -399,6 +399,7 @@ public class Main extends Application {
 
             nameSelectGrid.setPrefWidth(WIDTH / 5);
             nameSelectGrid.setMinWidth(WIDTH  / 5);
+            nameSelectGrid.setVgap(5);
             nameSelectGrid.setHgap(20);
             nameSelectGrid.setStyle("-fx-alignment: center;" );
 
@@ -414,24 +415,21 @@ public class Main extends Application {
             PlayAndBackButtons playAndBackBtns = new PlayAndBackButtons();
             BoardSizeButtons boardSizeBtns = new BoardSizeButtons();
 
-            Button hardBtn = new Button("Hard");
             Button easyBtn = new Button("Easy");
+            Button hardBtn = new Button("Hard");
+            easyBtn.setStyle("-fx-border-color: black; -fx-base: #00802b;");
+            hardBtn.setStyle("-fx-border-color: black;");
 
-            easyBtn.getStyleClass().add("boardSizeButtons");
-            easyBtn.setMinWidth(WIDTH / 5);
             easyBtn.setOnAction(event -> {
                 hardBtn.setStyle("fx-base: #666666;");
                 easyBtn.setStyle("-fx-base: #00802b;");
             });
 
-            hardBtn.getStyleClass().add("boardSizeButtons");
-            hardBtn.setMinWidth(WIDTH / 5);
             hardBtn.setOnAction(event -> {
                 easyBtn.setStyle("fx-base: #666666;");
                 hardBtn.setStyle("-fx-base: #00802b;");
             });
-            easyBtn.setStyle("-fx-base: #00802b;");
-            
+
             HBox difficultyBtns = new HBox();
             difficultyBtns.setStyle("-fx-alignment: center;");
             difficultyBtns.setSpacing(20.0);
