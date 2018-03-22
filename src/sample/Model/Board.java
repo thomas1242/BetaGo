@@ -1,9 +1,6 @@
 package sample.Model;
-import java.util.Set;
-import java.util.HashSet;
-import java.util.Queue;
-import java.util.List;
-import java.util.LinkedList;
+import java.util.*;
+
 import javafx.scene.paint.Color;
 import sample.Model.Utility.Pair;
 
@@ -223,5 +220,80 @@ public class Board {
                 if(isValidMove(i, j, color))
                     moves.add(new Pair<>(i, j));
         return moves;
+    }
+    public Pair<Integer,Integer> scoreBoard(){
+        Set<Point> visited = new HashSet<>();
+        Queue<Point> emptyPoints = new LinkedList<>(); // unvisited empty points
+        Queue<Point> unexploredNeighbors;
+        ArrayList<Point> connectedGroup;//connected group of empty points
+        ArrayList <Pair <List,String> > listOfGroups = new ArrayList <> ();
+        String territory;
+
+        //initialize empty points
+        for (int row = 0; row < board.length; row++)
+            for (int col = 0; col < board.length; col++)
+                if(board[row][col].getStone() == null){
+                    emptyPoints.add(board[row][col]);
+                }
+
+        //begin territory exploration algorithm
+        while(emptyPoints.size()>0) {
+            Point p = emptyPoints.remove();
+            if (!visited.contains(p)) {
+                unexploredNeighbors = new LinkedList<>();
+                unexploredNeighbors.add(p);
+                connectedGroup = new ArrayList<>();
+                territory = "U";
+                while (unexploredNeighbors.size() > 0) {
+                    Point n = unexploredNeighbors.remove();
+                    if (!visited.contains(n)) {
+                        visited.add(n);
+                    }
+                    if (emptyPoints.contains(n)) {
+                        emptyPoints.remove(n);
+                    }
+                    connectedGroup.add(n);
+                    // List<Point> adjList = n.getAdjacentPoints();
+
+                    for (Point adjPoint : n.getAdjacentPoints()) {
+                        if (adjPoint != null) {
+                            if (!visited.contains(adjPoint)) {
+                                if (adjPoint.getStone() == null) {
+                                    if ((!unexploredNeighbors.contains(adjPoint))) {
+                                        unexploredNeighbors.add(adjPoint);
+                                    }
+                                } else if (adjPoint.getStone().getColor() == Color.BLACK) {
+                                    if (territory == "W" || territory == "BW") {
+                                        territory = "BW";
+                                    } else {
+                                        territory = "B";
+                                    }
+                                } else if (adjPoint.getStone().getColor() == Color.WHITE) {
+                                    if (territory == "B" || territory == "BW") {
+                                        territory = "BW";
+                                    } else {
+                                        territory = "W";
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                listOfGroups.add(new Pair(connectedGroup, territory));
+            }
+        }
+        return calculateScore(listOfGroups);
+    }
+    public Pair<Integer,Integer> calculateScore (ArrayList <Pair <List,String> > listOfGroups){
+        int black = 0;
+        int white = 0;
+        for(Pair <List,String> group:listOfGroups){
+            if(group.getValue() == "B"){
+                black += group.getKey().size();
+            }else if(group.getValue() == "W"){
+                white += group.getKey().size();
+            }
+        }
+        return new Pair(black, white);
     }
 }
