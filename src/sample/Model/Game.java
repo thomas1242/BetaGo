@@ -72,6 +72,14 @@ public class Game {
     }
 
     public boolean isGameOver() {
+        Pair<Integer,Integer> score = board.scoreBoard();
+        for (Player p : players){
+            if(p.getColor() == Color.BLACK){
+                p.setCERPoints(score.getKey());
+            }else{
+                p.setCERPoints(score.getValue());
+            }
+        }
         return isGameOver;
     }
 
