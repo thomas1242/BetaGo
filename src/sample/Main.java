@@ -523,12 +523,13 @@ public class Main extends Application {
         }
 
         public void display() {
-            String winner = game.getPlayers()[0].getNumStonesCaptured() > game.getPlayers()[1].getNumStonesCaptured()
+
+            String winner = game.getPlayers()[0].getScore() > game.getPlayers()[1].getScore()
                             ? game.getPlayers()[0].getName() : game.getPlayers()[1].getName();
 
             scoreLabel.setText(winner + " wins!\n" +
-                               game.getPlayers()[0].getName() + ": " + game.getPlayers()[0].getNumStonesCaptured() + "\n" +
-                               game.getPlayers()[1].getName() + ": " + game.getPlayers()[1].getNumStonesCaptured());
+                               game.getPlayers()[0].getName() + ": " + game.getPlayers()[0].getScore() + "\n" +
+                               game.getPlayers()[1].getName() + ": " + game.getPlayers()[1].getScore());
             dialog.show();
         }
 
