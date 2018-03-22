@@ -7,6 +7,7 @@ public class Player {
     private String name;
     private int enemyStonesCaptured;
     private boolean isUsingAI;
+    private int colorEnclosedRegionPoints;
 
     public Player(String name, Color color) {
         this.name = name;
@@ -47,6 +48,13 @@ public class Player {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public void setCERPoints(int score){
+        colorEnclosedRegionPoints = score;
+    }
+    public int getScore(){
+        return enemyStonesCaptured + colorEnclosedRegionPoints;
     }
 
 }
