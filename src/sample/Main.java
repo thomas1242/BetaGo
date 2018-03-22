@@ -517,7 +517,7 @@ public class Main extends Application {
             dialogScene.getStylesheets().add("sample/stylesheet.css");
 
             dialog.setOnCloseRequest(event -> System.exit(0));
-            dialog.setOpacity(.70);
+            dialog.setOpacity(.90);
             dialog.setScene(dialogScene);
             dialog.setResizable(false);
         }
