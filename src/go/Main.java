@@ -1,4 +1,4 @@
-package sample;
+package go;
 import javafx.application.Application;
 import javafx.event.ActionEvent;
 import javafx.scene.*;
@@ -9,8 +9,8 @@ import javafx.scene.layout.*;
 import javafx.scene.paint.*;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-import sample.Model.*;
-import sample.Model.Utility.Pair;
+import go.Model.*;
+import go.Model.Utility.Pair;
 
 public class Main extends Application {
 
@@ -29,7 +29,7 @@ public class Main extends Application {
         game = new Game();
 
         gameView = new GameView(primaryStage);
-        gameView.getStylesheets().add("sample/stylesheet.css");
+        gameView.getStylesheets().add("go/stylesheet.css");
         gameView.setPrefSize(WIDTH, HEIGHT);
         gameView.displayHomeScreen();
 
@@ -128,7 +128,7 @@ public class Main extends Application {
                                                                                 // draw valid move on top of board
                     int xOffset = (int)(getWidth()  / 1.0 / game.getBoardSize());
                     int yOffset = (int)(getHeight() / 1.0 / game.getBoardSize());
-                    gc.setStroke(new Color(.9, 0, 0, 1)); gc.setLineWidth(3.0);
+                    gc.setStroke(new Color((double)180/255, (double)8/255, (double)19/255, 1)); gc.setLineWidth(3.0);
 
                     if(row != 0)
                         gc.strokeLine(col * xOffset + xOffset / 2,  yOffset / 2, col * xOffset + xOffset / 2, row * yOffset - 1);
@@ -528,7 +528,7 @@ public class Main extends Application {
             dialogVbox.getChildren().addAll(gameOverLabel, scoreLabel, hBox);
 
             Scene dialogScene = new Scene(dialogVbox, WIDTH * (1.2 * 3/4), HEIGHT* (1.0 * 3/4));
-            dialogScene.getStylesheets().add("sample/stylesheet.css");
+            dialogScene.getStylesheets().add("go/stylesheet.css");
 
             dialog.setOnCloseRequest(event -> System.exit(0));
             dialog.setOpacity(.90);

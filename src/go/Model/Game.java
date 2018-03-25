@@ -1,6 +1,6 @@
-package sample.Model;
+package go.Model;
 import javafx.scene.paint.Color;
-import sample.Model.Utility.Pair;
+import go.Model.Utility.Pair;
 
 import java.util.List;
 

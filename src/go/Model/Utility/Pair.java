@@ -1,4 +1,4 @@
-package sample.Model.Utility;
+package go.Model.Utility;
 
 public class Pair<K, V> {
 

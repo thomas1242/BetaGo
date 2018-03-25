@@ -1,4 +1,4 @@
-package sample.Model;
+package go.Model;
 import javafx.scene.paint.Color;
 
 public class Player {

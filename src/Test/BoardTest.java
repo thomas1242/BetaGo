@@ -1,9 +1,9 @@
 package Test;
 
 import static org.junit.jupiter.api.Assertions.*;
-import sample.Model.Stone;
+import go.Model.Stone;
 import org.junit.jupiter.api.Test;
-import sample.Model.Board;
+import go.Model.Board;
 import javafx.scene.paint.Color;
 import java.util.HashSet;
 

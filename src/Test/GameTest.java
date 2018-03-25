@@ -1,8 +1,8 @@
 package Test;
 
 import static org.junit.jupiter.api.Assertions.*;
-import sample.Model.Game;
-import sample.Model.Player;
+import go.Model.Game;
+import go.Model.Player;
 import org.junit.jupiter.api.Test;
 import javafx.scene.paint.Color;
 
