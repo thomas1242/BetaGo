@@ -126,6 +126,20 @@ public class Main extends Application {
                 if(game.isValidMove(row, col)) {
                     update();                                                   // draw board on top of previously drawn valid move
                                                                                 // draw valid move on top of board
+                    int xOffset = (int)(getWidth()  / 1.0 / game.getBoardSize());
+                    int yOffset = (int)(getHeight() / 1.0 / game.getBoardSize());
+                    gc.setStroke(new Color(.9, 0, 0, 1)); gc.setLineWidth(3.0);
+
+                    if(row != 0)
+                        gc.strokeLine(col * xOffset + xOffset / 2,  yOffset / 2, col * xOffset + xOffset / 2, row * yOffset - 1);
+                    if(row != game.getBoardSize() - 1)
+                         gc.strokeLine(col * xOffset + xOffset / 2,  row * yOffset + yOffset, col * xOffset + xOffset / 2, game.getBoardSize() * yOffset - yOffset / 2 - 1);
+
+                    if(col != 0)
+                        gc.strokeLine(xOffset / 2, row * yOffset + yOffset / 2, col * xOffset - 1, row * yOffset + yOffset / 2);
+                    if(col != game.getBoardSize() - 1)
+                        gc.strokeLine(col * xOffset + xOffset, row * yOffset + yOffset / 2, game.getBoardSize() * xOffset - xOffset / 2 - 1, row * yOffset + yOffset / 2);
+
                     if(game.getCurrentPlayer().getColor() == Color.WHITE)
                         drawCircle(row, col, new Color(1, 1, 1, 0.5));
                     else
