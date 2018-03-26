@@ -13,6 +13,7 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import go.Model.*;
 import go.Model.Utility.Pair;
+import javafx.util.StringConverter;
 
 public class Main extends Application {
 
@@ -479,17 +480,36 @@ public class Main extends Application {
             diffLabels.setStyle("-fx-alignment: center;");
 
             Label difficultyLabel = new Label("Difficulty");
-            Label difficultyLabel1 = new Label("Computer thinks " + 50 + " seconds per move");
+            Label difficultyLabel1 = new Label("Computer thinks " + 25 + " seconds per move");
             difficultyLabel1.setStyle(" -fx-font-size: 12pt;");
 
-            Slider slider = new Slider(1, 100, 50);
-            slider.setMajorTickUnit(25);
+            Slider slider = new Slider(0, 100, 25);
             slider.setMaxWidth(WIDTH * 0.85); slider.setMinWidth(WIDTH * 0.85);
-            slider.setShowTickMarks(true);
+            slider.setShowTickMarks(false);
+            slider.setShowTickLabels(true);
             slider.setSnapToTicks(true);
-            slider.setStyle("-fx-alignment: center;");
+            slider.setStyle("-fx-alignment: center; -fx-control-inner-background: #666666;");
             slider.valueProperty().addListener((ChangeListener) (arg0, arg1, arg2) -> {
-                difficultyLabel1.setText("Computer thinks " + (int)slider.getValue() + " seconds per move");
+                difficultyLabel1.setText("Computer thinks " + (int)slider.getValue() + " second" + ((int)slider.getValue() == 1 ? "" : "s") +  " per move");
+            });
+
+            slider.setLabelFormatter(new StringConverter<Double>() {
+                @Override
+                public String toString(Double n) {
+                    if (n == slider.getMin())   return "Easy";
+                    if (n == Math.ceil((slider.getMax() + slider.getMin()) / 2))    return "Medium";
+                    if (n == slider.getMax())   return "Hard";
+                    return "";
+                }
+                @Override
+                public Double fromString(String s) {
+                    switch (s) {
+                        case "Easy":   return 0d;
+                        case "Medium": return 1d;
+                        case "Hard":   return 3d;
+                        default:       return 3d;
+                    }
+                }
             });
 
             slider.setScaleY(.5);
