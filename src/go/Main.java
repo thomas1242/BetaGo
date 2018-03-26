@@ -1,5 +1,7 @@
 package go;
 import javafx.application.Application;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.scene.*;
 import javafx.scene.canvas.*;
@@ -128,7 +130,7 @@ public class Main extends Application {
                                                                                 // draw valid move on top of board
                     int xOffset = (int)(getWidth()  / 1.0 / game.getBoardSize());
                     int yOffset = (int)(getHeight() / 1.0 / game.getBoardSize());
-                    gc.setStroke(new Color((double)180/255, (double)8/255, (double)19/255, 1)); gc.setLineWidth(3.0);
+                    gc.setStroke(new Color((double)180/255, (double)8/255, (double)19/255, 1.0)); gc.setLineWidth(5.0);
 
                     if(row != 0)
                         gc.strokeLine(col * xOffset + xOffset / 2,  yOffset / 2, col * xOffset + xOffset / 2, row * yOffset - 1);
@@ -192,7 +194,7 @@ public class Main extends Application {
             int xOffset = (int)(getWidth()  / 1.0 / size);
             int yOffset = (int)(getHeight() / 1.0 / size);
             gc.setStroke(Color.BLACK);
-            gc.setLineWidth(1.5);
+            gc.setLineWidth(2.0);
 
             for (int i = 0; i < size; i++) {
                 gc.strokeLine(i * xOffset + xOffset / 2,  yOffset / 2, i * xOffset + xOffset / 2, game.getBoardSize() * yOffset - yOffset / 2 - 1);
@@ -251,8 +253,7 @@ public class Main extends Application {
         }
 
         private void updateLabel() {
-            label.setText(game.getCurrentPlayer().getName() + "'s turn\n" +
-                    game.getPlayers()[0].getName() + ": " + game.getPlayers()[0].getNumStonesCaptured() + "\n" + game.getPlayers()[1].getName() + ": " + game.getPlayers()[1].getNumStonesCaptured());
+            label.setText(game.getCurrentPlayer().getName() + "'s turn\n");
 
             if (game.getCurrentPlayer().getColor() == Color.BLACK)
                 currPlayerImage.setImage(blackImageView.getImage());
@@ -449,23 +450,23 @@ public class Main extends Application {
             difficultyBtns.setSpacing(20.0);
             difficultyBtns.getChildren().addAll(easyBtn, hardBtn);
 
-            int imageWidth = WIDTH / 4;
+            int imageWidth = (int)(WIDTH * 0.25);
             ImageView whiteImageView = new ImageView( new Image(Main.class.getResourceAsStream("../images/white.png"), imageWidth, imageWidth, true, true) );
             ImageView blackImageView = new ImageView( new Image(Main.class.getResourceAsStream("../images/black.png"), imageWidth, imageWidth, true, true) );
-            whiteImageView.setOpacity(0.5);
+            whiteImageView.setOpacity(0.45);
 
             whiteImageView.setOnMouseClicked(event -> {
                 game.getPlayers()[0].enableAI();
                 game.getPlayers()[1].disableAI();
 
                 whiteImageView.setOpacity(1.0);
-                blackImageView.setOpacity(0.5);
+                blackImageView.setOpacity(0.45);
             });
             blackImageView.setOnMouseClicked(event -> {
                 game.getPlayers()[0].disableAI();
                 game.getPlayers()[1].enableAI();
 
-                whiteImageView.setOpacity(0.5);
+                whiteImageView.setOpacity(0.45);
                 blackImageView.setOpacity(1.0);
             });
 
@@ -473,10 +474,31 @@ public class Main extends Application {
             stoneBtns.setStyle("-fx-alignment: center;");
             stoneBtns.setSpacing(20.0);
             stoneBtns.getChildren().addAll(blackImageView, whiteImageView);
-            
+
+            VBox diffLabels = new VBox();
+            diffLabels.setStyle("-fx-alignment: center;");
+
             Label difficultyLabel = new Label("Difficulty");
+            Label difficultyLabel1 = new Label("Computer thinks " + 50 + " seconds per move");
+            difficultyLabel1.setStyle(" -fx-font-size: 12pt;");
+
+            Slider slider = new Slider(1, 100, 50);
+            slider.setMajorTickUnit(25);
+            slider.setMaxWidth(WIDTH * 0.85); slider.setMinWidth(WIDTH * 0.85);
+            slider.setShowTickMarks(true);
+            slider.setSnapToTicks(true);
+            slider.setStyle("-fx-alignment: center;");
+            slider.valueProperty().addListener((ChangeListener) (arg0, arg1, arg2) -> {
+                difficultyLabel1.setText("Computer thinks " + (int)slider.getValue() + " seconds per move");
+            });
+
+            slider.setScaleY(.5);
+
+            diffLabels.getChildren().addAll(difficultyLabel, difficultyLabel1, slider, stoneBtns);
+
             Label boardSizeLabel = new Label("Board size");
-            getChildren().addAll(boardSizeLabel, boardSizeBtns, difficultyLabel, difficultyBtns, stoneBtns, playAndBackBtns);
+
+            getChildren().addAll(boardSizeLabel, boardSizeBtns, diffLabels, playAndBackBtns);
         }
     }
 
