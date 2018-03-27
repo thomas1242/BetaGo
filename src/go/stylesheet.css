@@ -81,7 +81,7 @@
 .playBackButtons {
     -fx-spacing: 50;
     -fx-alignment: center;
-    -fx-font-size: 26pt;
+    -fx-font-size: 22pt;
 }
 
 .endGamePopup {

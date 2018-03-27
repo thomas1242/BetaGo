@@ -129,19 +129,19 @@ public class Main extends Application {
                 if(game.isValidMove(row, col)) {
                     update();                                                   // draw board on top of previously drawn valid move
                                                                                 // draw valid move on top of board
-                    int xOffset = (int)(getWidth()  / 1.0 / game.getBoardSize());
-                    int yOffset = (int)(getHeight() / 1.0 / game.getBoardSize());
-                    gc.setStroke(new Color((double)180/255, (double)8/255, (double)19/255, 1.0)); gc.setLineWidth(5.0);
-
-                    if(row != 0)
-                        gc.strokeLine(col * xOffset + xOffset / 2,  yOffset / 2, col * xOffset + xOffset / 2, row * yOffset - 1);
-                    if(row != game.getBoardSize() - 1)
-                         gc.strokeLine(col * xOffset + xOffset / 2,  row * yOffset + yOffset, col * xOffset + xOffset / 2, game.getBoardSize() * yOffset - yOffset / 2 - 1);
-
-                    if(col != 0)
-                        gc.strokeLine(xOffset / 2, row * yOffset + yOffset / 2, col * xOffset - 1, row * yOffset + yOffset / 2);
-                    if(col != game.getBoardSize() - 1)
-                        gc.strokeLine(col * xOffset + xOffset, row * yOffset + yOffset / 2, game.getBoardSize() * xOffset - xOffset / 2 - 1, row * yOffset + yOffset / 2);
+//                    int xOffset = (int)(getWidth()  / 1.0 / game.getBoardSize());
+//                    int yOffset = (int)(getHeight() / 1.0 / game.getBoardSize());
+//                    gc.setStroke(new Color((double)180/255, (double)8/255, (double)19/255, 1.0)); gc.setLineWidth(5.0);
+//
+//                    if(row != 0)
+//                        gc.strokeLine(col * xOffset + xOffset / 2,  yOffset / 2, col * xOffset + xOffset / 2, row * yOffset - 1);
+//                    if(row != game.getBoardSize() - 1)
+//                         gc.strokeLine(col * xOffset + xOffset / 2,  row * yOffset + yOffset, col * xOffset + xOffset / 2, game.getBoardSize() * yOffset - yOffset / 2 - 1);
+//
+//                    if(col != 0)
+//                        gc.strokeLine(xOffset / 2, row * yOffset + yOffset / 2, col * xOffset - 1, row * yOffset + yOffset / 2);
+//                    if(col != game.getBoardSize() - 1)
+//                        gc.strokeLine(col * xOffset + xOffset, row * yOffset + yOffset / 2, game.getBoardSize() * xOffset - xOffset / 2 - 1, row * yOffset + yOffset / 2);
 
                     if(game.getCurrentPlayer().getColor() == Color.WHITE)
                         drawCircle(row, col, new Color(1, 1, 1, 0.5));
@@ -477,18 +477,18 @@ public class Main extends Application {
             stoneBtns.getChildren().addAll(blackImageView, whiteImageView);
 
             VBox diffLabels = new VBox();
-            diffLabels.setStyle("-fx-alignment: center;");
+            diffLabels.setStyle("-fx-alignment: center; -fx-spacing: 10;");
 
             Label difficultyLabel = new Label("Difficulty");
             Label difficultyLabel1 = new Label("Computer thinks " + 25 + " seconds per move");
-            difficultyLabel1.setStyle(" -fx-font-size: 12pt;");
+            difficultyLabel1.setStyle(" -fx-font-size: 12pt; -fx-spacing: 30;");
 
             Slider slider = new Slider(0, 100, 25);
             slider.setMaxWidth(WIDTH * 0.85); slider.setMinWidth(WIDTH * 0.85);
             slider.setShowTickMarks(false);
             slider.setShowTickLabels(true);
-            slider.setSnapToTicks(true);
-            slider.setStyle("-fx-alignment: center; -fx-control-inner-background: #666666;");
+            slider.setSnapToTicks(false);
+            slider.setStyle("-fx-alignment: center; -fx-control-inner-background: #666666; -fx-color:#549534; -fx-base: #549534; ");
             slider.valueProperty().addListener((ChangeListener) (arg0, arg1, arg2) -> {
                 difficultyLabel1.setText("Computer thinks " + (int)slider.getValue() + " second" + ((int)slider.getValue() == 1 ? "" : "s") +  " per move");
             });
