@@ -42,7 +42,7 @@
 /*---------Game Play Screen -------------------------*/
 
 .boardView {
-     -fx-background-image: url("../images/wood.jpg");
+     -fx-background-image: url("../images/temp.jpg");
 }
 
 .sidePanel {

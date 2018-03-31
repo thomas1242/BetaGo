@@ -116,6 +116,8 @@ public class Main extends Application {
             gc = getGraphicsContext2D();
 
             setOnMouseClicked(event -> {
+                if(game.getCurrentPlayer().isUsingAI()) return;
+
                 Pair<Integer, Integer> position = pixelToBoardCoordinate(event.getX(), event.getY());
                 int row = position.getValue(), col = position.getKey();
 
@@ -123,25 +125,27 @@ public class Main extends Application {
             });
 
             setOnMouseMoved(event -> {
+                if(game.getCurrentPlayer().isUsingAI()) return;
+
                 Pair<Integer, Integer> position = pixelToBoardCoordinate(event.getX(), event.getY());
                 int row = position.getValue(), col = position.getKey();
 
                 if(game.isValidMove(row, col)) {
                     update();                                                   // draw board on top of previously drawn valid move
                                                                                 // draw valid move on top of board
-//                    int xOffset = (int)(getWidth()  / 1.0 / game.getBoardSize());
-//                    int yOffset = (int)(getHeight() / 1.0 / game.getBoardSize());
-//                    gc.setStroke(new Color((double)180/255, (double)8/255, (double)19/255, 1.0)); gc.setLineWidth(5.0);
-//
-//                    if(row != 0)
-//                        gc.strokeLine(col * xOffset + xOffset / 2,  yOffset / 2, col * xOffset + xOffset / 2, row * yOffset - 1);
-//                    if(row != game.getBoardSize() - 1)
-//                         gc.strokeLine(col * xOffset + xOffset / 2,  row * yOffset + yOffset, col * xOffset + xOffset / 2, game.getBoardSize() * yOffset - yOffset / 2 - 1);
-//
-//                    if(col != 0)
-//                        gc.strokeLine(xOffset / 2, row * yOffset + yOffset / 2, col * xOffset - 1, row * yOffset + yOffset / 2);
-//                    if(col != game.getBoardSize() - 1)
-//                        gc.strokeLine(col * xOffset + xOffset, row * yOffset + yOffset / 2, game.getBoardSize() * xOffset - xOffset / 2 - 1, row * yOffset + yOffset / 2);
+                    int xOffset = (int)(getWidth()  / 1.0 / game.getBoardSize());
+                    int yOffset = (int)(getHeight() / 1.0 / game.getBoardSize());
+                    gc.setStroke(new Color((double)180/255, (double)8/255, (double)19/255, 1.0)); gc.setLineWidth(5.0);
+
+                    if(row != 0)
+                        gc.strokeLine(col * xOffset + xOffset / 2,  yOffset / 2, col * xOffset + xOffset / 2, row * yOffset - 1);
+                    if(row != game.getBoardSize() - 1)
+                         gc.strokeLine(col * xOffset + xOffset / 2,  row * yOffset + yOffset, col * xOffset + xOffset / 2, game.getBoardSize() * yOffset - yOffset / 2 - 1);
+
+                    if(col != 0)
+                        gc.strokeLine(xOffset / 2, row * yOffset + yOffset / 2, col * xOffset - 1, row * yOffset + yOffset / 2);
+                    if(col != game.getBoardSize() - 1)
+                        gc.strokeLine(col * xOffset + xOffset, row * yOffset + yOffset / 2, game.getBoardSize() * xOffset - xOffset / 2 - 1, row * yOffset + yOffset / 2);
 
                     if(game.getCurrentPlayer().getColor() == Color.WHITE)
                         drawCircle(row, col, new Color(1, 1, 1, 0.5));
@@ -159,11 +163,7 @@ public class Main extends Application {
         private void attemptToPlaceStone(int row, int col) {
             if(game.isValidMove(row, col))
                 game.playerMove(row, col);
-
-            if(game.isGameOver())
-                gameView.displayGameOverPopup();
-            else
-                gameView.updateGamePlayScreen();
+              gameView.updateGamePlayScreen();
         }
 
         private void update() {
@@ -352,8 +352,8 @@ public class Main extends Application {
             playBtn.setStyle("-fx-border-color: black;");
             backBtn.setStyle("-fx-border-color: black;");
 
-            playBtn.setMinWidth(WIDTH * .5);
-            backBtn.setMinWidth(WIDTH * .5);
+            playBtn.setMinWidth(WIDTH * .40);
+            backBtn.setMinWidth(WIDTH * .40);
 
             getChildren().addAll(backBtn, playBtn);
         }
@@ -480,8 +480,8 @@ public class Main extends Application {
             diffLabels.setStyle("-fx-alignment: center; -fx-spacing: 10;");
 
             Label difficultyLabel = new Label("Difficulty");
-            Label difficultyLabel1 = new Label("Computer thinks " + 25 + " seconds per move");
-            difficultyLabel1.setStyle(" -fx-font-size: 12pt; -fx-spacing: 30;");
+            Label difficultyLabel1 = new Label("Computer thinks " + (int)(25/3.333) + " seconds per move");
+            difficultyLabel1.setStyle(" -fx-font-size: 15pt; -fx-spacing: 30;");
 
             Slider slider = new Slider(0, 100, 25);
             slider.setMaxWidth(WIDTH * 0.85); slider.setMinWidth(WIDTH * 0.85);
@@ -490,7 +490,7 @@ public class Main extends Application {
             slider.setSnapToTicks(false);
             slider.setStyle("-fx-alignment: center; -fx-control-inner-background: #666666; -fx-color:#549534; -fx-base: #549534; ");
             slider.valueProperty().addListener((ChangeListener) (arg0, arg1, arg2) -> {
-                difficultyLabel1.setText("Computer thinks " + (int)slider.getValue() + " second" + ((int)slider.getValue() == 1 ? "" : "s") +  " per move");
+                difficultyLabel1.setText("Computer thinks " + (int)(slider.getValue()/3.333) + " second" + ((int)slider.getValue() == 1 ? "" : "s") +  " per move");
             });
 
             slider.setLabelFormatter(new StringConverter<Double>() {
@@ -520,6 +520,7 @@ public class Main extends Application {
 
             getChildren().addAll(boardSizeLabel, boardSizeBtns, diffLabels, playAndBackBtns);
         }
+
     }
 
     class GameOverPopUp extends Stage {

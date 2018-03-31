@@ -86,8 +86,17 @@ public class Game {
     public void nextTurn() {
         turn = ++turn % 2;
 
-        if( getCurrentPlayer().isUsingAI() )    // AI plays
-            AI.makeMove(this);
+        new Thread(() -> {
+            try {
+                Thread.sleep(250);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+
+            if( getCurrentPlayer().isUsingAI() )    // AI plays
+                AI.makeMove(this);
+        }).start();
+
     }
 
     @Override
