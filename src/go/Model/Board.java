@@ -20,7 +20,37 @@ public class Board {
                 for (Point adjacentPoint : getAdjacentPointsNESW(i, j))
                     board[i][j].getAdjacentPoints().add(adjacentPoint);
     }
+    public Board(Board copyBoard) {
+        board = new Point[copyBoard.size()][copyBoard.size()];
 
+        for (int i = 0; i < board.length; i++)                      // fill 2D array with Point objects
+            for (int j = 0; j < board.length; j++)
+                board[i][j] = new Point();
+
+        for (int i = 0; i < board.length; i++)                      // connect adjacent points
+            for (int j = 0; j < board.length; j++)
+                for (Point adjacentPoint : getAdjacentPointsNESW(i, j))
+                    board[i][j].getAdjacentPoints().add(adjacentPoint);
+
+        for (int i = 0; i < board.length; i++)
+            for (int j = 0; j < board.length; j++)
+                if(copyBoard.getStone(i,j) != null)
+                    placeStoneOnBoard(i,j,copyBoard.getStone(i,j).getColor());
+    }
+    public boolean findEquivalent(Board newBoard){
+            for (int i = 0; i < board.length; i++)
+                for (int j = 0; j < board.length; j++)
+                      if ((board[i][j].getStone() != null && newBoard.getStone(i, j) != null))
+                          if(newBoard.getStone(i,j).getColor().toString().equals(board[i][j].getStone().getColor().toString()))
+                              continue;
+                          else
+                              return false;
+                      else if(board[i][j].getStone() != null && newBoard.getStone(i, j)== null)
+                              return false;
+                      else if(board[i][j].getStone() == null && newBoard.getStone(i, j)!= null)
+                              return false;
+            return true;
+        }
     public boolean isValidMove(int row, int col, Color color) {
         if(!isValidLocation(row, col) || board[row][col].getStone() != null)
             return false;
@@ -169,7 +199,7 @@ public class Board {
         return row >= 0 && col >= 0 && row < board.length && col < board.length;
     }
 
-    @Override
+ /*   @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append("    ");
@@ -197,7 +227,7 @@ public class Board {
         sb.append("\n");
 
         return sb.toString();
-    }
+    }*/
 
     public void clearBoard() {
         for (int i = 0; i < board.length; i++)
@@ -263,13 +293,13 @@ public class Board {
                                         unexploredNeighbors.add(adjPoint);
                                     }
                                 } else if (adjPoint.getStone().getColor() == Color.BLACK) {
-                                    if (territory == "W" || territory == "BW") {
+                                    if (territory.equals("W") || territory.equals("BW")) {
                                         territory = "BW";
                                     } else {
                                         territory = "B";
                                     }
                                 } else if (adjPoint.getStone().getColor() == Color.WHITE) {
-                                    if (territory == "B" || territory == "BW") {
+                                    if (territory.equals("B") || territory.equals("BW")) {
                                         territory = "BW";
                                     } else {
                                         territory = "W";
@@ -284,16 +314,31 @@ public class Board {
         }
         return calculateScore(listOfGroups);
     }
-    public Pair<Integer,Integer> calculateScore (ArrayList <Pair <List,String> > listOfGroups){
+    private Pair<Integer,Integer> calculateScore (ArrayList <Pair <List,String> > listOfGroups){
         int black = 0;
         int white = 0;
         for(Pair <List,String> group:listOfGroups){
-            if(group.getValue() == "B"){
+            if(group.getValue().equals("B")){
                 black += group.getKey().size();
-            }else if(group.getValue() == "W"){
+            }else if(group.getValue().equals("W")){
                 white += group.getKey().size();
             }
         }
         return new Pair(black, white);
+    }
+    public String outcome(Color player){
+        if(validMoves(player).size() > 20){
+            return "ONGOING";
+        }else{
+            Pair<Integer,Integer> score = scoreBoard();
+            if(score.getKey() > score.getValue()){
+                return "BLACK";
+            }else if(score.getValue() > score.getKey()){
+                return  "WHITE";
+            }else if(score.getKey().equals(score.getValue())){
+                return "TIE";
+            }
+        }
+        return null;
     }
 }
