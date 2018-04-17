@@ -8,7 +8,7 @@ public class Game {
     private Player[] players;
     private Board board;
     private int turn;
-
+    private MCTS mcts = new MCTS(3);
     private MoveData prevMove;          // ko rule
     private boolean lastTurnPassed;
 
@@ -22,7 +22,7 @@ public class Game {
         setBoardSize(9);
     }
 
-    public void setBoardSize(int size) {
+    public void setBoardSize(int size)  {
         board = new Board(size);
     }
 
@@ -85,15 +85,16 @@ public class Game {
 
     public void nextTurn() {
         turn = ++turn % 2;
-
-        if( getCurrentPlayer().isUsingAI() )    // AI plays
-            AI.makeMove(this);
+        if( getCurrentPlayer().isUsingAI() ){
+            this.board = new Board(mcts.getNextBestMove(this.board, getCurrentPlayer().getColor()));
+            turn = ++turn % 2;
+        }
     }
 
-    @Override
+    /*@Override
     public String toString() {
         return board.toString() + "SCORES P1: " + players[0].getNumStonesCaptured() + " P2: " + players[1].getNumStonesCaptured() + '\n';
-    }
+    }*/
 
     public Player getCurrentPlayer() {
         return players[turn];
@@ -123,6 +124,7 @@ public class Game {
 
         if(getCurrentPlayer().isUsingAI())
             AI.makeMove(this);
+
     }
 
     public void setPlayerOneName(String playerOne) {
