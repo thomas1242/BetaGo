@@ -72,11 +72,11 @@ public class GameNode {
         int counter = 0;
         for(GameNode child : children) {
             counter++;
-            System.out.println("child " + child.getRow()+", "+ child.getCol()+ " " + child.getBoardState().getNumOfWins() + "/" +  + child.getBoardState().getNumOfPlayouts());
+            System.out.println("position [" + child.getRow()+"]["+ child.getCol()+ "] : " + child.getBoardState().getNumOfWins() + "/" +  + child.getBoardState().getNumOfPlayouts());
            /* for(GameNode grandchild: child.getChildren()){
                 System.out.println("grand child " + grandchild.getRow()+", "+ grandchild.getCol()+ " " + grandchild.getBoardState().getNumOfWins() + "/" +  + grandchild.getBoardState().getNumOfPlayouts());
             }*/
         }
-        System.out.println("number of possible states = "+counter);
+        System.out.println("# of possible states: " +counter);
     }
 }

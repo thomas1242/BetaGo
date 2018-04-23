@@ -51,8 +51,11 @@ public class MCTS {
             Color outcome = simulate(exploreNode);
             backPropagate(exploreNode,outcome);
         }
-        //System.out.println("simulations: "+count);
-        //root.printChildStats();
+
+        System.out.println("# of simulations: " + count);
+        System.out.println("Children (possible moves from current board state) win ratios");
+        root.printChildStats();
+
         root = root.getChildWithMostWins();
         root.setParent(null);
         return root.getBoardState().getBoard();
@@ -99,6 +102,11 @@ public class MCTS {
             }
             node = node.getParent();
         }
+    }
+
+
+    public void setMoveTime(long moveTime) {
+        this.moveTime = moveTime;
     }
 }
 class UCT{

@@ -22,6 +22,10 @@ public class Game {
         setBoardSize(9);
     }
 
+    public void setMoveTime(long movetime) {
+        mcts.setMoveTime(movetime);
+    }
+
     public void setBoardSize(int size)  {
         board = new Board(size);
     }
