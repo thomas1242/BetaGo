@@ -8,7 +8,7 @@ public class Game {
     private Player[] players;
     private Board board;
     private int turn;
-    private MCTS mcts = new MCTS(3);
+    private MCTS mcts = new MCTS(15);
     private MoveData prevMove;          // ko rule
     private boolean lastTurnPassed;
 
