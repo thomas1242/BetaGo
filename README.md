@@ -9,3 +9,5 @@ javac @argfile
 java -cp BetaGo/src/ go.Main 
 
 ```
+
+![Demo](demo.gif)
