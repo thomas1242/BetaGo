@@ -10,4 +10,4 @@ java -cp BetaGo/src/ go.Main
 
 ```
 
-![Demo](demo.gif)
+![user interface](UI.png)
